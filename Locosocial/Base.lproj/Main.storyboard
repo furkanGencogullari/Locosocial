@@ -26,10 +26,18 @@
         <!--Item 2-->
         <scene sceneID="wKi-KO-CUM">
             <objects>
-                <viewController id="ZHF-Vh-Vag" sceneMemberID="viewController">
+                <viewController id="ZHF-Vh-Vag" customClass="UploadViewController" customModule="Locosocial" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fke-ZD-lYu">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QGa-rK-ph2">
+                                <rect key="frame" x="218" y="447" width="39" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" image="plus" catalog="system" title="Button"/>
+                            </button>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="sWO-Dj-Mv4"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
@@ -37,7 +45,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iQY-fv-XLH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1792" y="404"/>
+            <point key="canvasLocation" x="1789.8550724637682" y="539.73214285714278"/>
         </scene>
         <!--Item 1-->
         <scene sceneID="FUq-Ae-4Gx">
@@ -115,7 +123,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
-                                            <outlet property="card" destination="Yw9-7H-Cr5" id="nfN-2Y-Ax1"/>
+                                            <outlet property="card" destination="Yw9-7H-Cr5" id="VSh-DN-h3e"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -159,6 +167,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
