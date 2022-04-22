@@ -30,10 +30,12 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         card.isHidden = true
         contentView.backgroundColor = .clear
         
+        contentView.clipsToBounds = false
+        
         let height = contentView.frame.height
         let width = contentView.frame.width
         
-        card2.frame = CGRect(x: 0, y: 0, width: width * 0.80, height: height * 0.95)
+        card2.frame = CGRect(x: 0, y: 0, width: width * 0.80, height: height * 0.90)
         card2.layer.position = contentView.center
         card2.backgroundColor = .clear
         contentView.addSubview(card2)
@@ -52,12 +54,13 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         userInDesc.font = UIFont(name: "Futura Medium", size: 15)
         
         
-        layer1.frame = CGRect(x: 0, y: 0, width: width * 0.8, height: height * 0.95)
+        layer1.frame = CGRect(x: 0, y: 0, width: width * 0.8, height: height * 0.90)
         layer1.backgroundColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1).cgColor
         layer1.cornerRadius = 40
         layer1.shadowOffset = CGSize(width: 5, height: 5)
         layer1.shadowColor = UIColor.black.cgColor
         layer1.shadowOpacity = 0.5
+        layer1.shadowRadius = 4
         card2.layer.addSublayer(layer1)
         layer1.addSublayer(userInDesc.layer)
         card2.addSubview(map)

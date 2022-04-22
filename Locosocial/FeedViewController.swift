@@ -18,6 +18,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         view.backgroundColor = UIColor (red: 0.9, green: 1, blue: 1, alpha: 1)
         cardTableView.backgroundColor = .clear
+        cardTableView.frame = view.bounds
 
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -7,17 +7,24 @@
 
 import UIKit
 import MapKit
+import CoreLocation
 
-class UploadViewController: UIViewController, MKMapViewDelegate, UITextViewDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate {
     
     let scrollView = UIScrollView()
+    
     let mapView = MKMapView()
+    let locationManager = CLLocationManager()
+    
     let titleField = UITextField()
     let descField = UITextView()
+    
     let imageScroll = UIScrollView()
     let addImageButton = UIButton()
     let imagePlaceholder = UILabel()
+    
     let uploadButton = UIButton()
+    
     let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.extraLight)
     
     let imageView1 = UIImageView()
@@ -26,6 +33,9 @@ class UploadViewController: UIViewController, MKMapViewDelegate, UITextViewDeleg
     let imageView4 = UIImageView()
     let imageView5 = UIImageView()
     let imageView6 = UIImageView()
+    
+    var chosenLongitude = 0.0
+    var chosenLatitude = 0.0
     
     
     
@@ -42,6 +52,17 @@ class UploadViewController: UIViewController, MKMapViewDelegate, UITextViewDeleg
         mapView.delegate = self
         mapView.layer.cornerRadius = 40
         scrollView.addSubview(mapView)
+        
+        let mapTouchGesture = UILongPressGestureRecognizer(target: self, action: #selector(chooseLocation))
+        mapTouchGesture.minimumPressDuration = 0.5
+        mapView.addGestureRecognizer(mapTouchGesture)
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+    
         
         
         titleField.frame = CGRect(x: view.frame.width / 2 - 190, y: 415, width: 380, height: 80)
@@ -201,6 +222,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, UITextViewDeleg
         blurView.frame = Frame
         blurView.layer.cornerRadius = 40
         blurView.clipsToBounds = true
+        
         scrollView.addSubview(blurView)
         
         
@@ -209,8 +231,61 @@ class UploadViewController: UIViewController, MKMapViewDelegate, UITextViewDeleg
         layer2.startPoint = CGPoint(x: 0, y: 0)
         layer2.endPoint = CGPoint(x: 1, y: 1)
         layer2.cornerRadius = 40
+        layer2.shadowOffset = CGSize(width: 0, height: 0)
+        layer2.shadowOpacity = 1
+        layer2.shadowColor = UIColor.white.cgColor
+        layer2.shadowRadius = 20
+        
         scrollView.layer.addSublayer(layer2)
+        
+        
     }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude)
+        let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        let region = MKCoordinateRegion(center: location, span: span)
+        mapView.setRegion(region, animated: true)
+    }
+    
+    @objc func chooseLocation (mapTouchGesture: UILongPressGestureRecognizer) {
+        let touchedPoint = mapTouchGesture.location(in: mapView)
+        let touchedCoordinate = mapView.convert(touchedPoint, toCoordinateFrom: mapView)
+        
+        chosenLatitude = touchedCoordinate.latitude
+        chosenLongitude = touchedCoordinate.longitude
+        
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = touchedCoordinate
+        self.mapView.addAnnotation(annotation)
+        
+        
+        
+        
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            
+            if annotation is MKUserLocation{
+                return nil
+            }
+            
+            let reuseId = "myAnnonation"
+            var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKMarkerAnnotationView
+            
+            if pinView == nil {
+                pinView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+                pinView?.canShowCallout = true
+                let button = UIButton(type: UIButton.ButtonType.detailDisclosure)
+                pinView?.rightCalloutAccessoryView = button
+                
+            } else {
+                pinView?.annotation = annotation
+                
+            }
+            return pinView
+        }
    
     
 

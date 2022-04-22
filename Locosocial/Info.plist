@@ -21,6 +21,8 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires you location.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>WorkSans-VariableFont_wght.ttf</string>
