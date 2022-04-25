@@ -126,7 +126,7 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         
         
         layer2.frame = CGRect(x: 0, y: 0, width: width * 0.75, height: height * 0.9)
-        layer2.colors = [UIColor(red: 0, green: 1, blue: 173/2, alpha: 0.2).cgColor, UIColor(red: 1, green: 0, blue: 157/255, alpha: 0.2).cgColor]
+        layer2.colors = [UIColor(red: 0, green: 1, blue: 173/255, alpha: 0.2).cgColor, UIColor(red: 1, green: 0, blue: 157/255, alpha: 0.2).cgColor]
         layer2.startPoint = CGPoint(x: 0, y: 0)
         layer2.endPoint = CGPoint(x: 1, y: 1)
         layer2.cornerRadius = 40
@@ -139,6 +139,9 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         blurView.frame = layer2.bounds
         blurView.layer.cornerRadius = 40
         blurView.clipsToBounds = true
+        
+        
+        
         
         userImage.image = UIImage(named: "zeynep")
         userImage.frame = CGRect(x: 0, y: 0, width: 80, height: 80)

@@ -16,7 +16,7 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         cardTableView.dataSource = self
         cardTableView.delegate = self
         
-        view.backgroundColor = UIColor (red: 0.9, green: 1, blue: 1, alpha: 1)
+        view.backgroundColor = UIColor (red: 225/255, green: 1, blue: 1, alpha: 1)
         cardTableView.backgroundColor = .clear
         cardTableView.frame = view.bounds
 
