@@ -19,6 +19,7 @@
 		8E627A5528115A5000B19F03 /* WorkSans-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E627A5428115A4F00B19F03 /* WorkSans-VariableFont_wght.ttf */; };
 		8EA2F3A328127A9D0001FFCE /* UploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA2F3A228127A9D0001FFCE /* UploadViewController.swift */; };
 		8EBDEF9C2817C83B00DE0329 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8EBDEF9B2817C83A00DE0329 /* GoogleService-Info.plist */; };
+		8EBDEF9E2817D81100DE0329 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDEF9D2817D81100DE0329 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		8E627A5428115A4F00B19F03 /* WorkSans-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WorkSans-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		8EA2F3A228127A9D0001FFCE /* UploadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadViewController.swift; sourceTree = "<group>"; };
 		8EBDEF9B2817C83A00DE0329 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8EBDEF9D2817D81100DE0329 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		F542763E55A5B086E42D4D36 /* Pods_Locosocial.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Locosocial.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -92,6 +94,7 @@
 			children = (
 				8E627A3C2811270400B19F03 /* AppDelegate.swift */,
 				8E627A3E2811270400B19F03 /* SceneDelegate.swift */,
+				8EBDEF9D2817D81100DE0329 /* SettingsViewController.swift */,
 				8E627A402811270400B19F03 /* ViewController.swift */,
 				8E627A5228112C3F00B19F03 /* FeedViewController.swift */,
 				8E627A5028112BF900B19F03 /* TableViewCell.swift */,
@@ -225,6 +228,7 @@
 			files = (
 				8E627A412811270400B19F03 /* ViewController.swift in Sources */,
 				8EA2F3A328127A9D0001FFCE /* UploadViewController.swift in Sources */,
+				8EBDEF9E2817D81100DE0329 /* SettingsViewController.swift in Sources */,
 				8E627A5128112BFA00B19F03 /* TableViewCell.swift in Sources */,
 				8E627A5328112C4000B19F03 /* FeedViewController.swift in Sources */,
 				8E627A3D2811270400B19F03 /* AppDelegate.swift in Sources */,
