@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     let bottomView = UIView()
     let bottomBlur = UIVisualEffectView()
     
-    let signInButton = UIButton()
+    let signUpButton = UIButton()
     let logInButton = UIButton()
     
     let bottomLabel = UILabel()
@@ -97,17 +97,17 @@ class ViewController: UIViewController {
         logInButton.addTarget(self, action: #selector(logInPressed), for: UIControl.Event.touchDown)
         view.addSubview(logInButton)
         
-        signInButton.frame = CGRect(x: view.frame.width / 2 - 280 / 2, y: 560 + 80, width: 280, height: 60)
-        signInButton.tintColor = UIColor(red: 225/255, green: 1, blue: 1, alpha: 1)
-        signInButton.configuration = .plain()
-        signInButton.setTitle("Sign In", for: UIControl.State.normal)
-        signInButton.titleLabel?.font = UIFont(name: "Futura Medium", size: 20)
-        signInButton.layer.cornerRadius = 30
-        signInButton.clipsToBounds = true
-        signInButton.isHidden = true
-        signInButton.layer.opacity = 0
-        signInButton.addTarget(self, action: #selector(signInPressed), for: UIControl.Event.touchDown)
-        view.addSubview(signInButton)
+        signUpButton.frame = CGRect(x: view.frame.width / 2 - 280 / 2, y: 560 + 80, width: 280, height: 60)
+        signUpButton.tintColor = UIColor(red: 225/255, green: 1, blue: 1, alpha: 1)
+        signUpButton.configuration = .plain()
+        signUpButton.setTitle("Sign Up", for: UIControl.State.normal)
+        signUpButton.titleLabel?.font = UIFont(name: "Futura Medium", size: 20)
+        signUpButton.layer.cornerRadius = 30
+        signUpButton.clipsToBounds = true
+        signUpButton.isHidden = true
+        signUpButton.layer.opacity = 0
+        signUpButton.addTarget(self, action: #selector(signInPressed), for: UIControl.Event.touchDown)
+        view.addSubview(signUpButton)
         
         
         //————— T E X T   F I E L D S
@@ -185,7 +185,7 @@ class ViewController: UIViewController {
             self.logInButton.isHidden = true
         }
         
-        self.signInButton.isHidden = false
+        self.signUpButton.isHidden = false
         UIView.animate(withDuration: 1, delay: 0.3) {
             self.topView.frame = CGRect(x: self.view.frame.width / 2 - 150, y: -40, width: 300, height: 670)
             self.topBlur.frame = CGRect(x: self.view.frame.width / 2 - 150, y: -40, width: 300, height: 670)
@@ -194,13 +194,13 @@ class ViewController: UIViewController {
         }
         
         Timer.scheduledTimer(withTimeInterval: 1.3, repeats: false) { Timer in
-            self.signInButton.isHidden = false
+            self.signUpButton.isHidden = false
             self.bottomLabel2.isHidden = false
         }
         
         UIView.animate(withDuration: 0.3, delay: 1.3) {
             self.usernameTextField.layer.opacity = 1
-            self.signInButton.layer.opacity = 1
+            self.signUpButton.layer.opacity = 1
             self.bottomLabel2.layer.opacity = 1
         }
     }
@@ -208,7 +208,7 @@ class ViewController: UIViewController {
     @objc func goUp() {
         UIView.animate(withDuration: 0.3, delay: 0) {
             self.usernameTextField.layer.opacity = 0
-            self.signInButton.layer.opacity = 0
+            self.signUpButton.layer.opacity = 0
             self.bottomLabel2.layer.opacity = 0
         }
         
@@ -224,7 +224,7 @@ class ViewController: UIViewController {
         }
         
         Timer.scheduledTimer(withTimeInterval: 1.3, repeats: false) { Timer in
-            self.signInButton.isHidden = true
+            self.signUpButton.isHidden = true
             self.logInButton.isHidden = false
             self.bottomLabel2.isHidden = true
         }
