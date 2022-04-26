@@ -8,7 +8,7 @@
 import UIKit
 import Firebase
 import FirebaseAuth
-
+import FirebaseFirestore
 class ViewController: UIViewController {
     
     let topView = UIView()
@@ -240,7 +240,17 @@ class ViewController: UIViewController {
                     alert.addAction(okButton)
                     self.present(alert, animated: true)
                 } else {
-                    self.performSegue(withIdentifier: "toTabBar", sender: nil)
+                    let user = ["username": self.usernameTextField.text!,
+                                "email": self.emailTextField.text!,
+                                "picture": "image"] as [String : Any]
+                    
+                    let db = Firestore.firestore()
+                    var ref: DocumentReference? = nil
+                    ref = db.collection("Usernames").addDocument(data: user, completion: { error in
+                        if error == nil {
+                            self.performSegue(withIdentifier: "toTabBar", sender: nil)
+                        }
+                    })
                 }
             }
         }

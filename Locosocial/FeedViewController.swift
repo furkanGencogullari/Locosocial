@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseFirestore
+import SDWebImage
 
 class FeedViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -15,12 +18,14 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        getData()
         
         topLogo.frame = CGRect(x: view.frame.width / 2 - 250 / 2, y: 0, width: 250, height: 90)
         topLogo.backgroundColor = .white
         
         topAvatar.layer.cornerRadius = 33 / 2
         topAvatar.clipsToBounds = true
+        topAvatar.contentMode = .scaleAspectFit
         
         
         cardTableView.dataSource = self
@@ -40,6 +45,24 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         //let cell = cardTableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! TableViewCell
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! TableViewCell
         return cell
+    }
+    
+    func getData() {
+        let db = Firestore.firestore()
+        db.collection("Usernames").addSnapshotListener { snapshot, error in
+            if error == nil {
+                if snapshot?.isEmpty != true {
+                    for doc in snapshot!.documents {
+                        if let email = doc.get("email") as? String {
+                            if email == Auth.auth().currentUser?.email! {
+                                    self.topAvatar.sd_setImage(with: URL(string: doc.get("picture") as! String))
+                            
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
 
