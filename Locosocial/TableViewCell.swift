@@ -125,7 +125,7 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         
         
         
-        layer2.frame = CGRect(x: 0, y: 0, width: width * 0.75, height: height * 0.9)
+        layer2.frame = CGRect(x: 0, y: 0, width: width * 0.8, height: height * 0.9)
         layer2.colors = [UIColor(red: 0, green: 1, blue: 173/255, alpha: 0.2).cgColor, UIColor(red: 1, green: 0, blue: 157/255, alpha: 0.2).cgColor]
         layer2.startPoint = CGPoint(x: 0, y: 0)
         layer2.endPoint = CGPoint(x: 1, y: 1)

@@ -1,0 +1,6 @@
+framework module Pods_Locosocial {
+  umbrella header "Pods-Locosocial-umbrella.h"
+
+  export *
+  module * { export * }
+}

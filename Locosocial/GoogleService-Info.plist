@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>357368703664-qrdsqibsuusf0ia926jr9aak5pa543tu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.357368703664-qrdsqibsuusf0ia926jr9aak5pa543tu</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDrenF0AAmj83yxRkkjKejxFDVJTQogCY0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>357368703664</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.furkan.Locosocial</string>
+	<key>PROJECT_ID</key>
+	<string>locosocial-63326</string>
+	<key>STORAGE_BUCKET</key>
+	<string>locosocial-63326.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:357368703664:ios:c2e36367a14cae73452975</string>
+</dict>
+</plist>

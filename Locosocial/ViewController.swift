@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuth
 
 class ViewController: UIViewController {
     
@@ -85,17 +87,18 @@ class ViewController: UIViewController {
         
         //————— B U T T O N S
         logInButton.frame = CGRect(x: view.frame.width / 2 - 280 / 2, y: 560 + 10, width: 280, height: 60)
-        logInButton.tintColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1)
+        logInButton.tintColor = UIColor(red: 225/255, green: 1, blue: 1, alpha: 1)
         logInButton.configuration = .plain()
         logInButton.setTitle("Log In", for: UIControl.State.normal)
         logInButton.titleLabel?.font = UIFont(name: "Futura Medium", size: 20)
         logInButton.layer.cornerRadius = 30
+        logInButton.isHidden = false
         logInButton.clipsToBounds = true
         logInButton.addTarget(self, action: #selector(logInPressed), for: UIControl.Event.touchDown)
         view.addSubview(logInButton)
         
         signInButton.frame = CGRect(x: view.frame.width / 2 - 280 / 2, y: 560 + 80, width: 280, height: 60)
-        signInButton.tintColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1)
+        signInButton.tintColor = UIColor(red: 225/255, green: 1, blue: 1, alpha: 1)
         signInButton.configuration = .plain()
         signInButton.setTitle("Sign In", for: UIControl.State.normal)
         signInButton.titleLabel?.font = UIFont(name: "Futura Medium", size: 20)
@@ -132,6 +135,8 @@ class ViewController: UIViewController {
         emailTextField.backgroundColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1)
         emailTextField.layer.cornerRadius = 30
         emailTextField.clipsToBounds = false
+        emailTextField.autocorrectionType = .no
+        emailTextField.autocapitalizationType = .none
         topView.addSubview(emailTextField)
         
         usernameTextField.frame = CGRect(x: 10, y: 670 - 210, width: 280, height: 60)
@@ -147,6 +152,8 @@ class ViewController: UIViewController {
         usernameTextField.clipsToBounds = true
         usernameTextField.isHidden = false
         usernameTextField.layer.opacity = 0
+        usernameTextField.autocorrectionType = .no
+        usernameTextField.autocapitalizationType = .none
         topView.addSubview(usernameTextField)
         
         
@@ -180,10 +187,10 @@ class ViewController: UIViewController {
         
         self.signInButton.isHidden = false
         UIView.animate(withDuration: 1, delay: 0.3) {
-            self.topView.frame =    CGRect(x: self.view.frame.width / 2 - 150, y: -40, width: 300, height: 670)
-            self.topBlur.frame =       CGRect(x: self.view.frame.width / 2 - 150, y: -40, width: 300, height: 670)
-            self.bottomView.frame =     CGRect(x: self.view.frame.width / 2 - 150, y: 896, width: 300, height: 120)
-            self.bottomBlur.frame =      CGRect(x: self.view.frame.width / 2 - 150, y: 896, width: 300, height: 120)
+            self.topView.frame = CGRect(x: self.view.frame.width / 2 - 150, y: -40, width: 300, height: 670)
+            self.topBlur.frame = CGRect(x: self.view.frame.width / 2 - 150, y: -40, width: 300, height: 670)
+            self.bottomView.frame = CGRect(x: self.view.frame.width / 2 - 150, y: 896, width: 300, height: 120)
+            self.bottomBlur.frame = CGRect(x: self.view.frame.width / 2 - 150, y: 896, width: 300, height: 120)
         }
         
         Timer.scheduledTimer(withTimeInterval: 1.3, repeats: false) { Timer in
@@ -225,15 +232,38 @@ class ViewController: UIViewController {
     
     
     @objc func signInPressed() {
-        performSegue(withIdentifier: "toTabBar", sender: nil)
+        if emailTextField.text != "" && passwordTextField.text != "" && usernameTextField.text != "" {
+            Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { authData, error in
+                if error != nil {
+                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
+                    let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
+                    alert.addAction(okButton)
+                    self.present(alert, animated: true)
+                } else {
+                    self.performSegue(withIdentifier: "toTabBar", sender: nil)
+                }
+            }
+        }
+        
+        
         
     }
     
     
     @objc func logInPressed() {
-        performSegue(withIdentifier: "toTabBar", sender: nil)
+        if emailTextField.text != "" && passwordTextField.text != "" {
+            Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { authData, error in
+                if error != nil {
+                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
+                    let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
+                    alert.addAction(okButton)
+                    self.present(alert, animated: true)
+                } else {
+                    self.performSegue(withIdentifier: "toTabBar", sender: nil)
+                }
+            }
         
-        
+        }
     }
     
     
