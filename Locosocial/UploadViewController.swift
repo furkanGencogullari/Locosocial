@@ -50,9 +50,14 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let appearance = UITabBarAppearance()
+        appearance.backgroundEffect = UIBlurEffect(style: .light)
+        tabBarController?.tabBar.scrollEdgeAppearance = appearance
+        tabBarController?.tabBar.standardAppearance = appearance
+        
         scrollView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         scrollView.backgroundColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1)
-        scrollView.contentSize = CGSize(width: view.frame.width, height: 1000)
+        scrollView.contentSize = CGSize(width: view.frame.width, height: 900)
         view.addSubview(scrollView)
         
         
@@ -81,7 +86,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         
         descField.delegate = self
-        descField.frame = CGRect(x: view.frame.width / 2 - 190, y: 510, width: 380, height: 300)
+        descField.frame = CGRect(x: view.frame.width / 2 - 190, y: 510, width: 380, height: 150)
         descField.text = "Description"
         descField.backgroundColor = .clear
         descField.textColor = .lightGray
@@ -92,7 +97,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         scrollView.addSubview(descField)
         
         
-        imageScroll.frame = CGRect(x: view.frame.width / 2 - 190, y: 825, width: 380, height: 80)
+        imageScroll.frame = CGRect(x: view.frame.width / 2 - 190, y: 675, width: 380, height: 80)
         imageScroll.backgroundColor = .clear
         imageScroll.contentSize = CGSize(width: 500, height: 80)
         imageScroll.layer.cornerRadius = 40
@@ -107,7 +112,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageScroll.addSubview(imagePlaceholder)
         
         
-        addImageButton.frame = CGRect(x: view.frame.width / 2 - 190 + 300, y: 825, width: 80, height: 80)
+        addImageButton.frame = CGRect(x: view.frame.width / 2 - 190 + 300, y: 675, width: 80, height: 80)
         addImageButton.tintColor = .blue
         addImageButton.configuration = .filled()
         addImageButton.layer.cornerRadius = 40
@@ -172,7 +177,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
         
         
-        uploadButton.frame = CGRect(x: view.frame.width / 2 - 190, y: 920, width: 380, height: 80)
+        uploadButton.frame = CGRect(x: view.frame.width / 2 - 190, y: 770, width: 380, height: 80)
         uploadButton.titleLabel?.font = UIFont(name: "Futura Medium", size: 20)
         uploadButton.setTitle("Upload", for: UIControl.State.normal)
         uploadButton.layer.cornerRadius = 40

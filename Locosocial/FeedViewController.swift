@@ -14,18 +14,38 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBOutlet weak var cardTableView: UITableView!
     let topLogo = UIImageView()
-    @IBOutlet weak var topAvatar: UIImageView!
+    let topAvatar = UIImageView()
+    let blurEffect = UIBlurEffect(style: .light)
+    let topBlurView = UIVisualEffectView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appearance = UITabBarAppearance()
+        appearance.backgroundEffect = UIBlurEffect(style: .light)
+        tabBarController?.tabBar.scrollEdgeAppearance = appearance
+        tabBarController?.tabBar.standardAppearance = appearance
+        
         getData()
         
-        topLogo.frame = CGRect(x: view.frame.width / 2 - 250 / 2, y: 0, width: 250, height: 90)
-        topLogo.backgroundColor = .white
+        topBlurView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 90)
+        topBlurView.effect = blurEffect
+        view.addSubview(topBlurView)
         
-        topAvatar.layer.cornerRadius = 33 / 2
+        
+        
+        topLogo.frame = CGRect(x: view.frame.width / 2 - 200 / 2, y: 38, width: 200, height: 50)
+        topLogo.image = UIImage(named: "logo")
+        topLogo.contentMode = .scaleAspectFit
+        view.addSubview(topLogo)
+        
+        topAvatar.frame = CGRect(x: 40, y: 42, width: 40, height: 40)
+        topAvatar.layer.cornerRadius = 40 / 2
         topAvatar.clipsToBounds = true
         topAvatar.contentMode = .scaleAspectFit
+        topAvatar.backgroundColor = .white
+        view.addSubview(topAvatar)
+        
+        
         
         
         cardTableView.dataSource = self
