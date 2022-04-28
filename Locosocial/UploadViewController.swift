@@ -284,7 +284,8 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                                             "images": (self.imageUrlArray),
                                             "title": self.titleField.text!,
                                             "description": self.descField.text!,
-                                            "postedBy": self.username.text!,
+                                            "postedBy": doc.get("username") as! String,
+                                            "postedByAvatar": doc.get("picture") as! String,
                                             "date": FieldValue.serverTimestamp()
                                         ] as [String : Any]
                                         
@@ -329,7 +330,8 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                                             "images": (self.imageUrlArray),
                                             "title": self.titleField.text!,
                                             "description": self.descField.text!,
-                                            "postedBy": self.username.text!,
+                                            "postedBy": doc.get("username") as! String,
+                                            "postedByImage": doc.get("picture") as! String,
                                             "date": FieldValue.serverTimestamp()
                                         ] as [String : Any]
                                         

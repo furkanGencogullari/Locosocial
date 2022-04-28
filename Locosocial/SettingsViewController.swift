@@ -43,6 +43,8 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
         userNameLabel.frame = CGRect(x: 200, y: 325, width: 200, height: 60)
         userNameLabel.text = ""
         userNameLabel.font = UIFont(name: "Futura Medium", size: 25)
+        userNameLabel.adjustsFontSizeToFitWidth = true
+        userNameLabel.minimumScaleFactor = 0.1
         userNameLabel.textAlignment = .center
         userNameLabel.textColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1)
         view.addSubview(userNameLabel)
@@ -100,11 +102,12 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
         let picker = UIImagePickerController()
         picker.delegate = self
         picker.sourceType = .photoLibrary
+        picker.allowsEditing = true
         present(picker, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        avatar.image = info[.originalImage] as? UIImage
+        avatar.image = info[.editedImage] as? UIImage
         
         let storage = Storage.storage()
         let storageRef = storage.reference()
@@ -128,6 +131,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
                 }
             }
         }
+        
         
         
         

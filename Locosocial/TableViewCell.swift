@@ -7,26 +7,46 @@
 
 import UIKit
 import MapKit
+import CoreLocation
 
-class TableViewCell: UITableViewCell, MKMapViewDelegate {
+class TableViewCell: UITableViewCell, MKMapViewDelegate, CLLocationManagerDelegate {
     @IBOutlet weak var card: UIView!
     let layer1 = CALayer()
     let card2 = UIView()
     let layer2 = CAGradientLayer()
     let map = MKMapView()
-    let userDesc = UILabel()
+    var userDesc = UILabel()
     let blurLayer = CALayer()
     let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.extraLight)
     let blurView = UIVisualEffectView()
-    let userInDesc = UILabel()
+    var userInDesc = UILabel()
     let userImage = UIImageView()
     let userNameLabel = UILabel()
     let scrollView = UIScrollView()
     var switcher = 0
+    
+    var longitude2 = 48.85651124898516
+    var latitude2 = 2.3127014340196865
+    
+    var userLocation = CLLocationCoordinate2D()
+    
+    let locationManager = CLLocationManager()
 
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+        
+        print("longitudex x x x x x x x")
+        print(longitude2)
+        print("latitudex x x x x x x x x")
+        print(userLocation)
+        
         card.isHidden = true
         contentView.backgroundColor = .clear
         
@@ -43,9 +63,10 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         map.delegate = self
         map.frame = CGRect(x: card2.frame.width / 2 - (width * 0.70 / 2), y: 10, width: width * 0.70, height: height * 0.45)
         map.layer.cornerRadius = 40
+        map.isUserInteractionEnabled = false
         
     
-        userInDesc.text = "I created amazing memories here. The food is really good and they have fancy wines to go with them."
+        userInDesc.text = ""
         userInDesc.textAlignment = .center
         userInDesc.frame = CGRect(x: card2.frame.width / 2 - (width * 0.70 / 2), y: card2.frame.height / 2 + 3, width: width * 0.70, height: height * 0.25)
         userInDesc.numberOfLines = 5
@@ -143,20 +164,21 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         
         
         
-        userImage.image = UIImage(named: "zeynep")
+        userImage.image = UIImage()
         userImage.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
         userImage.contentMode = .scaleAspectFit
         userImage.layer.cornerRadius = 80 / 2
         userImage.clipsToBounds = true
         
-        userNameLabel.text = "@zeynepca"
+        userNameLabel.text = ""
         userNameLabel.frame = CGRect(x: 90, y: 0, width: 180, height: 80)
         userNameLabel.textAlignment = .left
         userNameLabel.textColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1)
         userNameLabel.font = UIFont(name: "Futura Medium", size: 20)
+        userNameLabel.adjustsFontSizeToFitWidth = true
         
         
-        userDesc.text = "This place is amazing!!"
+        userDesc.text = ""
         userDesc.textAlignment = .center
         userDesc.textColor = .white
         userDesc.frame = CGRect(x: 0, y: 0, width: width * 0.75, height: height * 0.9)
@@ -249,6 +271,16 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate {
         
         switcher = 0
      }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = CLLocationCoordinate2D(latitude: latitude2, longitude: longitude2)
+        let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        let region = MKCoordinateRegion(center: location, span: span)
+        map.setRegion(region, animated: true)
+    }
+    
+    
+    
     
 
 }
