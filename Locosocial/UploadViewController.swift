@@ -41,6 +41,8 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     var imageUrlArray = [String]()
     
+    var imageArray = [UIImageView]()
+    
     let username = UILabel()
     
     
@@ -123,6 +125,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageView1.image = nil
         imageView1.layer.cornerRadius = 30
         imageView1.clipsToBounds = true
+        imageArray.append(imageView1)
         imageScroll.addSubview(imageView1)
         
         imageView2.frame = CGRect(x: 80, y: 10, width: 60, height: 60)
@@ -130,6 +133,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageView2.image = nil
         imageView2.layer.cornerRadius = 30
         imageView2.clipsToBounds = true
+        imageArray.append(imageView2)
         imageScroll.addSubview(imageView2)
         
         imageView3.frame = CGRect(x: 150, y: 10, width: 60, height: 60)
@@ -137,6 +141,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageView3.image = nil
         imageView3.layer.cornerRadius = 30
         imageView3.clipsToBounds = true
+        imageArray.append(imageView3)
         imageScroll.addSubview(imageView3)
         
         imageView4.frame = CGRect(x: 220, y: 10, width: 60, height: 60)
@@ -144,6 +149,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageView4.image = nil
         imageView4.layer.cornerRadius = 30
         imageView4.clipsToBounds = true
+        imageArray.append(imageView4)
         imageScroll.addSubview(imageView4)
         
         imageView5.frame = CGRect(x: 290, y: 10, width: 60, height: 60)
@@ -151,6 +157,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageView5.image = nil
         imageView5.layer.cornerRadius = 30
         imageView5.clipsToBounds = true
+        imageArray.append(imageView5)
         imageScroll.addSubview(imageView5)
         
         imageView6.frame = CGRect(x: 360, y: 10, width: 60, height: 60)
@@ -158,7 +165,10 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageView6.image = nil
         imageView6.layer.cornerRadius = 30
         imageView6.clipsToBounds = true
+        imageArray.append(imageView6)
         imageScroll.addSubview(imageView6)
+        
+        
         
         
         
@@ -199,7 +209,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
             imageView5.image = info[.originalImage] as? UIImage
         } else if imageView6.image == nil {
             imageView6.image = info[.originalImage] as? UIImage
-        } else {
+        } else if imageView6.image != nil {
             let alert = UIAlertController(title: "Error", message: "You can add six images", preferredStyle: UIAlertController.Style.alert)
             let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
             alert.addAction(okButton)
@@ -210,283 +220,90 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     
     @objc func uploadButtonPressed() {
+        
+        
         let storage = Storage.storage()
         let storageRef = storage.reference()
         
         let mediaFolder = storageRef.child("Media")
         
-        if let data = imageView1.image?.jpegData(compressionQuality: 0.5) {
-            let uuid = UUID().uuidString
-            let imageRef = mediaFolder.child("\(uuid).jpeg")
-            imageRef.putData(data, metadata: nil) { metadata, error in
-                if error != nil {
-                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                    let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                    alert.addAction(okButton)
-                    self.present(alert, animated: true)
-                } else {
-                    imageRef.downloadURL { url, error in
-                        if error == nil {
-                            let imageUrl = url?.absoluteString
-                            self.imageUrlArray.append(imageUrl!)
-                            print(imageUrl!)
-                            print("yyyyyyyyyyyyyyyy")
-                            
-                            if let data = self.imageView2.image?.jpegData(compressionQuality: 0.5) {
-                                let uuid = UUID().uuidString
-                                let imageRef = mediaFolder.child("\(uuid).jpeg")
-                                imageRef.putData(data, metadata: nil) { metadata, error in
-                                    if error != nil {
+        let group = DispatchGroup()
+        
+        
+        for imageView in imageArray {
+            
+            if let data = imageView.image?.jpegData(compressionQuality: 0.5) {
+                group.enter()
+                
+                let uuid = UUID().uuidString
+                let imageRef = mediaFolder.child("\(uuid).jpeg")
+                imageRef.putData(data, metadata: nil) { metadata, error in
+                    if error != nil {
+                        let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
+                        let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
+                        alert.addAction(okButton)
+                        self.present(alert, animated: true)
+                        
+                        group.leave()
+                        print("LEAVE")
+                    } else {
+                        imageRef.downloadURL { url, error in
+                            if error == nil {
+                                let imageUrl = url?.absoluteString
+                                self.imageUrlArray.append(imageUrl!)
+                                
+                                group.leave()
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        group.notify(queue: .main) {
+            let db = Firestore.firestore()
+            db.collection("Usernames").addSnapshotListener { snapshot, error in
+                if error == nil {
+                    if snapshot?.isEmpty != true {
+                        for doc in snapshot!.documents {
+                            if let email = doc.get("email") as? String {
+                                if email == Auth.auth().currentUser?.email! {
+                                    if let usernameString = doc.get("username") as? String {
+                                        self.username.text = usernameString
                                         
-                                    } else {
-                                        imageRef.downloadURL { url, error in
+                                        let firestorePost = [
+                                            "latitude": self.chosenLatitude,
+                                            "longitude": self.chosenLongitude,
+                                            "images": (self.imageUrlArray),
+                                            "title": self.titleField.text!,
+                                            "description": self.descField.text!,
+                                            "postedBy": self.username.text!,
+                                            "date": FieldValue.serverTimestamp()
+                                        ] as [String : Any]
+                                        
+                                        var ref: DocumentReference? = nil
+                                        ref = db.collection("Posts").addDocument(data: firestorePost, completion: { error in
                                             if error != nil {
                                                 let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
                                                 let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
                                                 alert.addAction(okButton)
                                                 self.present(alert, animated: true)
                                             } else {
-                                                let imageUrl = url?.absoluteString
-                                                self.imageUrlArray.append(imageUrl!)
-                                                print(imageUrl!)
-                                                print("yyyyyyyyyyyyyyyy")
-                                                
-                                                if let data = self.imageView3.image?.jpegData(compressionQuality: 0.5) {
-                                                    let uuid = UUID().uuidString
-                                                    let imageRef = mediaFolder.child("\(uuid).jpeg")
-                                                    imageRef.putData(data, metadata: nil) { metadata, error in
-                                                        if error != nil {
-                                                            
-                                                        } else {
-                                                            imageRef.downloadURL { url, error in
-                                                                if error != nil {
-                                                                    let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                                                                    let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                                                                    alert.addAction(okButton)
-                                                                    self.present(alert, animated: true)
-                                                                } else {
-                                                                    let imageUrl = url?.absoluteString
-                                                                    self.imageUrlArray.append(imageUrl!)
-                                                                    print(imageUrl!)
-                                                                    print("yyyyyyyyyyyyyyyy")
-                                                                    
-                                                                    if let data = self.imageView4.image?.jpegData(compressionQuality: 0.5) {
-                                                                        let uuid = UUID().uuidString
-                                                                        let imageRef = mediaFolder.child("\(uuid).jpeg")
-                                                                        imageRef.putData(data, metadata: nil) { metadata, error in
-                                                                            if error != nil {
-                                                                                
-                                                                            } else {
-                                                                                imageRef.downloadURL { url, error in
-                                                                                    if error != nil {
-                                                                                        let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                                                                                        let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                                                                                        alert.addAction(okButton)
-                                                                                        self.present(alert, animated: true)
-                                                                                    } else {
-                                                                                        let imageUrl = url?.absoluteString
-                                                                                        self.imageUrlArray.append(imageUrl!)
-                                                                                        print(imageUrl!)
-                                                                                        print("yyyyyyyyyyyyyyyy")
-                                                                                        
-                                                                                        if let data = self.imageView5.image?.jpegData(compressionQuality: 0.5) {
-                                                                                            let uuid = UUID().uuidString
-                                                                                            let imageRef = mediaFolder.child("\(uuid).jpeg")
-                                                                                            imageRef.putData(data, metadata: nil) { metadata, error in
-                                                                                                if error != nil {
-                                                                                                    
-                                                                                                } else {
-                                                                                                    imageRef.downloadURL { url, error in
-                                                                                                        if error != nil {
-                                                                                                            let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                                                                                                            let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                                                                                                            alert.addAction(okButton)
-                                                                                                            self.present(alert, animated: true)
-                                                                                                        } else {
-                                                                                                            let imageUrl = url?.absoluteString
-                                                                                                            self.imageUrlArray.append(imageUrl!)
-                                                                                                            print(imageUrl!)
-                                                                                                            print("yyyyyyyyyyyyyyyy")
-                                                                                                            
-                                                                                                            if let data = self.imageView6.image?.jpegData(compressionQuality: 0.5) {
-                                                                                                                let uuid = UUID().uuidString
-                                                                                                                let imageRef = mediaFolder.child("\(uuid).jpeg")
-                                                                                                                imageRef.putData(data, metadata: nil) { metadata, error in
-                                                                                                                    if error != nil {
-                                                                                                                        
-                                                                                                                    } else {
-                                                                                                                        imageRef.downloadURL { url, error in
-                                                                                                                            if error != nil {
-                                                                                                                                let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                                                                                                                                let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                                                                                                                                alert.addAction(okButton)
-                                                                                                                                self.present(alert, animated: true)
-                                                                                                                            } else {
-                                                                                                                                let imageUrl = url?.absoluteString
-                                                                                                                                self.imageUrlArray.append(imageUrl!)
-                                                                                                                                print(imageUrl!)
-                                                                                                                                print("yyyyyyyyyyyyyyyy")
-                                                                                                                                self.uploadPost()
-                                                                                                                            }
-                                                                                                                        }
-                                                                                                                    }
-                                                                                                                }
-                                                                                                            } else {
-                                                                                                                self.uploadPost()
-                                                                                                            }
-                                                                                                        }
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        } else {
-                                                                                            self.uploadPost()
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    } else {
-                                                                        self.uploadPost()
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                } else {
-                                                    self.uploadPost()
-                                                }
+                                                self.tabBarController?.selectedIndex = 0
+                                                print(self.imageUrlArray)
                                             }
-                                        }
+                                        })
+                                        
                                     }
                                 }
-                            } else {
-                                self.uploadPost()
                             }
-                            
-                        }
-                    }
-                }
-            }
-        } else {
-            self.uploadPost()
-        }
-        /*
-        if let data = imageView2.image?.jpegData(compressionQuality: 0.5) {
-            let uuid = UUID()
-            let imageRef = mediaFolder.child("\(uuid).jpeg")
-            imageRef.putData(data, metadata: nil) { metadata, error in
-                if error != nil {
-                    
-                } else {
-                    imageRef.downloadURL { url, error in
-                        if error != nil {
-                            let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                            let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                            alert.addAction(okButton)
-                            self.present(alert, animated: true)
-                        } else {
-                            let imageUrl = url?.absoluteString
-                            self.imageUrlArray.append(imageUrl!)
-                            print(imageUrl!)
-                            print("yyyyyyyyyyyyyyyy")
                         }
                     }
                 }
             }
         }
-        if let data = imageView3.image?.jpegData(compressionQuality: 0.5) {
-            let uuid = UUID().uuidString
-            let imageRef = mediaFolder.child("\(uuid).jpeg")
-            imageRef.putData(data, metadata: nil) { metadata, error in
-                if error != nil {
-                    
-                } else {
-                    imageRef.downloadURL { url, error in
-                        if error != nil {
-                            let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                            let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                            alert.addAction(okButton)
-                            self.present(alert, animated: true)
-                        } else {
-                            let imageUrl = url?.absoluteString
-                            self.imageUrlArray.append(imageUrl!)
-                            print(imageUrl!)
-                            print("yyyyyyyyyyyyyyyy")
-                        }
-                    }
-                }
-            }
-        }
-        if let data = imageView4.image?.jpegData(compressionQuality: 0.5) {
-            let uuid = UUID().uuidString
-            let imageRef = mediaFolder.child("\(uuid).jpeg")
-            imageRef.putData(data, metadata: nil) { metadata, error in
-                if error != nil {
-                    
-                } else {
-                    imageRef.downloadURL { url, error in
-                        if error != nil {
-                            let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                            let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                            alert.addAction(okButton)
-                            self.present(alert, animated: true)
-                        } else {
-                            let imageUrl = url?.absoluteString
-                            self.imageUrlArray.append(imageUrl!)
-                            print(imageUrl!)
-                            print("yyyyyyyyyyyyyyyy")
-                        }
-                    }
-                }
-            }
-        }
-        if let data = imageView5.image?.jpegData(compressionQuality: 0.5) {
-            let uuid = UUID().uuidString
-            let imageRef = mediaFolder.child("\(uuid).jpeg")
-            imageRef.putData(data, metadata: nil) { metadata, error in
-                if error != nil {
-                    
-                } else {
-                    imageRef.downloadURL { url, error in
-                        if error != nil {
-                            let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                            let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                            alert.addAction(okButton)
-                            self.present(alert, animated: true)
-                        } else {
-                            let imageUrl = url?.absoluteString
-                            self.imageUrlArray.append(imageUrl!)
-                            print(imageUrl!)
-                            print("yyyyyyyyyyyyyyyy")
-                        }
-                    }
-                }
-            }
-        }
-        if let data = imageView6.image?.jpegData(compressionQuality: 0.5) {
-            let uuid = UUID().uuidString
-            let imageRef = mediaFolder.child("\(uuid).jpeg")
-            imageRef.putData(data, metadata: nil) { metadata, error in
-                if error != nil {
-                    
-                } else {
-                    imageRef.downloadURL { url, error in
-                        if error != nil {
-                            let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                            let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                            alert.addAction(okButton)
-                            self.present(alert, animated: true)
-                        } else {
-                            let imageUrl = url?.absoluteString
-                            self.imageUrlArray.append(imageUrl!)
-                            print(imageUrl!)
-                            print("yyyyyyyyyyyyyyyy")
-                        }
-                    }
-                }
-            }
-        }
-         */
     }
     
     func uploadPost() {
