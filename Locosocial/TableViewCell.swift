@@ -165,10 +165,10 @@ class TableViewCell: UITableViewCell, MKMapViewDelegate, CLLocationManagerDelega
         
         userTitle.text = ""
         userTitle.backgroundColor = .clear
-        userTitle.layer.shadowColor = UIColor.black.cgColor
-        userTitle.layer.shadowRadius = 1.5
-        userTitle.layer.shadowOpacity = 0.3
-        userTitle.layer.shadowOffset = CGSize(width: 1, height: 1)
+        userTitle.layer.shadowColor = UIColor(red: 225/255, green: 1, blue: 1, alpha: 1).cgColor
+        userTitle.layer.shadowRadius = 4
+        userTitle.layer.shadowOpacity = 1
+        userTitle.layer.shadowOffset = CGSize(width: 0, height: 0)
         userTitle.layer.masksToBounds = false
         userTitle.textAlignment = .center
         userTitle.textColor = UIColor(red: 255/255, green: 118/255, blue: 202/255, alpha: 1)
