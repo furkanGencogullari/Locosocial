@@ -27,9 +27,12 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     var userDescArray = [String]()
     var postedByArray = [String]()
     
+    var imagesArray = [[String]]()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         let appearance = UITabBarAppearance()
         appearance.backgroundEffect = UIBlurEffect(style: .light)
         tabBarController?.tabBar.scrollEdgeAppearance = appearance
@@ -40,8 +43,6 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         topBlurView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 90)
         topBlurView.effect = blurEffect
         view.addSubview(topBlurView)
-        
-        
         
         topLogo.frame = CGRect(x: view.frame.width / 2 - 200 / 2, y: 38, width: 200, height: 50)
         topLogo.image = UIImage(named: "logo")
@@ -55,12 +56,8 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         topAvatar.backgroundColor = .white
         view.addSubview(topAvatar)
         
-        
-        
-        
         cardTableView.dataSource = self
         cardTableView.delegate = self
-        
         
         
         view.backgroundColor = UIColor (red: 225/255, green: 1, blue: 1, alpha: 1)
@@ -74,14 +71,40 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //let cell = cardTableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! TableViewCell
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! TableViewCell
-        cell.userImage.sd_setImage(with: URL(string: avatarArray[indexPath.row]))
+        cell.avatar.sd_setImage(with: URL(string: avatarArray[indexPath.row]))
         cell.userNameLabel.text = "@\(postedByArray[indexPath.row])"
-        cell.userDesc.text = titleArray[indexPath.row]
-        cell.userInDesc.text = userDescArray[indexPath.row]
-        cell.latitude2 = userLatitudeArray[indexPath.row]
-        cell.longitude2 = userLongitudeArray[indexPath.row]
-        cell.userLocation = CLLocationCoordinate2D(latitude: userLatitudeArray[1], longitude: userLongitudeArray[1])
-        
+        cell.userTitle.text = titleArray[indexPath.row]
+        cell.userDesc.text = userDescArray[indexPath.row]
+        cell.latitude = userLatitudeArray[indexPath.row]
+        cell.longitude = userLongitudeArray[indexPath.row]
+        if imagesArray[indexPath.row].count == 1 {
+            cell.userImage1.sd_setImage(with: URL(string: imagesArray[indexPath.row][0]))
+        } else if imagesArray[indexPath.row].count == 2 {
+            cell.userImage1.sd_setImage(with: URL(string: imagesArray[indexPath.row][0]))
+            cell.userImage2.sd_setImage(with: URL(string: imagesArray[indexPath.row][1]))
+        } else if imagesArray[indexPath.row].count == 3 {
+            cell.userImage1.sd_setImage(with: URL(string: imagesArray[indexPath.row][0]))
+            cell.userImage2.sd_setImage(with: URL(string: imagesArray[indexPath.row][1]))
+            cell.userImage3.sd_setImage(with: URL(string: imagesArray[indexPath.row][2]))
+        } else if imagesArray[indexPath.row].count == 4 {
+            cell.userImage1.sd_setImage(with: URL(string: imagesArray[indexPath.row][0]))
+            cell.userImage2.sd_setImage(with: URL(string: imagesArray[indexPath.row][1]))
+            cell.userImage3.sd_setImage(with: URL(string: imagesArray[indexPath.row][2]))
+            cell.userImage4.sd_setImage(with: URL(string: imagesArray[indexPath.row][3]))
+        } else if imagesArray[indexPath.row].count == 5 {
+            cell.userImage1.sd_setImage(with: URL(string: imagesArray[indexPath.row][0]))
+            cell.userImage2.sd_setImage(with: URL(string: imagesArray[indexPath.row][1]))
+            cell.userImage3.sd_setImage(with: URL(string: imagesArray[indexPath.row][2]))
+            cell.userImage4.sd_setImage(with: URL(string: imagesArray[indexPath.row][3]))
+            cell.userImage5.sd_setImage(with: URL(string: imagesArray[indexPath.row][4]))
+        } else if imagesArray[indexPath.row].count == 6 {
+            cell.userImage1.sd_setImage(with: URL(string: imagesArray[indexPath.row][0]))
+            cell.userImage2.sd_setImage(with: URL(string: imagesArray[indexPath.row][1]))
+            cell.userImage3.sd_setImage(with: URL(string: imagesArray[indexPath.row][2]))
+            cell.userImage4.sd_setImage(with: URL(string: imagesArray[indexPath.row][3]))
+            cell.userImage5.sd_setImage(with: URL(string: imagesArray[indexPath.row][4]))
+            cell.userImage6.sd_setImage(with: URL(string: imagesArray[indexPath.row][5]))
+        }
         return cell
     }
     
@@ -95,7 +118,6 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
                             if email == Auth.auth().currentUser?.email! {
                                 
                                 self.topAvatar.sd_setImage(with: URL(string: doc.get("picture") as! String))
-                            
                             }
                         }
                     }
@@ -105,6 +127,13 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
         db.collection("Posts").addSnapshotListener { snaphot, error in
             if error == nil {
                 if snaphot?.isEmpty != true {
+                    self.avatarArray.removeAll()
+                    self.titleArray.removeAll()
+                    self.userLatitudeArray.removeAll()
+                    self.userLongitudeArray.removeAll()
+                    self.postedByArray.removeAll()
+                    self.userDescArray.removeAll()
+                    self.imagesArray.removeAll()
                     for doc in snaphot!.documents {
                         if let avatar = doc.get("postedByAvatar") as? String {
                             self.avatarArray.append(avatar)
@@ -114,19 +143,18 @@ class FeedViewController: UIViewController, UITableViewDelegate, UITableViewData
                         }
                         if let latitude = doc.get("latitude") as? CLLocationDegrees {
                             self.userLatitudeArray.append(latitude)
-                            print(latitude)
-                            print(" L A T I T U D E ")
                         }
                         if let longitude = doc.get("longitude") as? CLLocationDegrees {
                             self.userLongitudeArray.append(longitude)
-                            print(longitude)
-                            print(" L O N G I T U D E ")
                         }
                         if let postedBy = doc.get("postedBy") as? String {
                             self.postedByArray.append(postedBy)
                         }
                         if let desc = doc.get("description") as? String {
                             self.userDescArray.append(desc)
+                        }
+                        if let images = doc.get("images") as? [String] {
+                            self.imagesArray.append(images)
                         }
                     }
                 }

@@ -20,8 +20,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
         view.backgroundColor = UIColor(red: 225/255, green: 1, blue: 1, alpha: 1)
         
         avatar.frame = CGRect(x: 30, y: 280, width: 150, height: 150)
@@ -61,8 +59,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
         
         let avatarTapGesture = UITapGestureRecognizer(target: self, action: #selector(avatarPressed))
         avatar.addGestureRecognizer(avatarTapGesture)
-        
-        
     }
     
     @objc func logOutPressed() {
@@ -131,12 +127,6 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
                 }
             }
         }
-        
-        
-        
-        
-        
         dismiss(animated: true)
     }
-
 }

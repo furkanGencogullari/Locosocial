@@ -55,6 +55,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         tabBarController?.tabBar.scrollEdgeAppearance = appearance
         tabBarController?.tabBar.standardAppearance = appearance
         
+        
         scrollView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         scrollView.backgroundColor = UIColor(red: 0.3, green: 0.3, blue: 0.5, alpha: 1)
         scrollView.contentSize = CGSize(width: view.frame.width, height: 900)
@@ -75,6 +76,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
+        
         titleField.frame = CGRect(x: view.frame.width / 2 - 190, y: 415, width: 380, height: 80)
         titleField.layer.cornerRadius = 40
         titleField.backgroundColor = .clear
@@ -83,7 +85,6 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         titleField.placeholder = "Title"
         createBackground(Frame: titleField.frame, View: titleField)
         scrollView.addSubview(titleField)
-        
         
         descField.delegate = self
         descField.frame = CGRect(x: view.frame.width / 2 - 190, y: 510, width: 380, height: 150)
@@ -104,16 +105,14 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         createBackground(Frame: imageScroll.frame, View: imageScroll)
         scrollView.addSubview(imageScroll)
         
-        
         imagePlaceholder.frame = CGRect(x: 40, y: 10, width: 360, height: 60)
         imagePlaceholder.textColor = UIColor.lightGray
         imagePlaceholder.text = "Add Images"
         imagePlaceholder.font = UIFont(name: "Futura Medium", size: 17)
         imageScroll.addSubview(imagePlaceholder)
         
-        
         addImageButton.frame = CGRect(x: view.frame.width / 2 - 190 + 300, y: 675, width: 80, height: 80)
-        addImageButton.tintColor = .blue
+        addImageButton.tintColor = UIColor(red: 1, green: 118/255, blue: 202/255, alpha: 1)
         addImageButton.configuration = .filled()
         addImageButton.layer.cornerRadius = 40
         addImageButton.clipsToBounds = true
@@ -123,8 +122,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         addImageButton.addTarget(self, action: #selector(addImageButtonPressed), for: UIControl.Event.touchDown)
         scrollView.addSubview(addImageButton)
         
-        
-        
+    
         imageView1.frame = CGRect(x: 10, y: 10, width: 60, height: 60)
         imageView1.backgroundColor = .clear
         imageView1.image = nil
@@ -174,9 +172,6 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         imageScroll.addSubview(imageView6)
         
         
-        
-        
-        
         uploadButton.frame = CGRect(x: view.frame.width / 2 - 190, y: 770, width: 380, height: 80)
         uploadButton.titleLabel?.font = UIFont(name: "Futura Medium", size: 20)
         uploadButton.setTitle("Upload", for: UIControl.State.normal)
@@ -193,13 +188,13 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         }
     }
     
-    
     @objc func addImageButtonPressed() {
         let picker = UIImagePickerController()
         picker.delegate = self
         picker.sourceType = .photoLibrary
         self.present(picker, animated: true)
     }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if imageView1.image == nil {
             imageView1.image = info[.originalImage] as? UIImage
@@ -222,24 +217,17 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         dismiss(animated: true)
     }
     
-    
-    
     @objc func uploadButtonPressed() {
-        
-        
         let storage = Storage.storage()
         let storageRef = storage.reference()
-        
         let mediaFolder = storageRef.child("Media")
         
         let group = DispatchGroup()
         
-        
         for imageView in imageArray {
-            
             if let data = imageView.image?.jpegData(compressionQuality: 0.5) {
-                group.enter()
                 
+                group.enter()
                 let uuid = UUID().uuidString
                 let imageRef = mediaFolder.child("\(uuid).jpeg")
                 imageRef.putData(data, metadata: nil) { metadata, error in
@@ -248,15 +236,13 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                         let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
                         alert.addAction(okButton)
                         self.present(alert, animated: true)
-                        
                         group.leave()
-                        print("LEAVE")
+                        
                     } else {
                         imageRef.downloadURL { url, error in
                             if error == nil {
                                 let imageUrl = url?.absoluteString
                                 self.imageUrlArray.append(imageUrl!)
-                                
                                 group.leave()
                                 
                             }
@@ -265,8 +251,6 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 }
             }
         }
-        
-        
         group.notify(queue: .main) {
             let db = Firestore.firestore()
             db.collection("Usernames").addSnapshotListener { snapshot, error in
@@ -312,59 +296,6 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         }
     }
     
-    func uploadPost() {
-        Timer.scheduledTimer(withTimeInterval: 0, repeats: false) { Timer in
-            let db = Firestore.firestore()
-            db.collection("Usernames").addSnapshotListener { snapshot, error in
-                if error == nil {
-                    if snapshot?.isEmpty != true {
-                        for doc in snapshot!.documents {
-                            if let email = doc.get("email") as? String {
-                                if email == Auth.auth().currentUser?.email! {
-                                    if let usernameString = doc.get("username") as? String {
-                                        self.username.text = usernameString
-                                        
-                                        let firestorePost = [
-                                            "latitude": self.chosenLatitude,
-                                            "longitude": self.chosenLongitude,
-                                            "images": (self.imageUrlArray),
-                                            "title": self.titleField.text!,
-                                            "description": self.descField.text!,
-                                            "postedBy": doc.get("username") as! String,
-                                            "postedByImage": doc.get("picture") as! String,
-                                            "date": FieldValue.serverTimestamp()
-                                        ] as [String : Any]
-                                        
-                                        
-                                        
-                                        
-                                        var ref: DocumentReference? = nil
-                                        ref = db.collection("Posts").addDocument(data: firestorePost, completion: { error in
-                                            if error != nil {
-                                                let alert = UIAlertController(title: "Error", message: error?.localizedDescription ?? "Error", preferredStyle: UIAlertController.Style.alert)
-                                                let okButton = UIAlertAction(title: "Ok", style: UIAlertAction.Style.default)
-                                                alert.addAction(okButton)
-                                                self.present(alert, animated: true)
-                                            } else {
-                                                self.tabBarController?.selectedIndex = 0
-                                                print(self.imageUrlArray)
-                                                print("x x x x x x x x x x x x x x x ")
-                                            }
-                                        })
-                                        
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            
-        }
-    }
-    
-    
     func createBackground (Frame: CGRect, View: UIView) {
         let layer2 = CAGradientLayer()
         let blurView = UIVisualEffectView()
@@ -374,9 +305,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         blurView.frame = Frame
         blurView.layer.cornerRadius = 40
         blurView.clipsToBounds = true
-        
         scrollView.addSubview(blurView)
-        
         
         layer2.frame = Frame
         layer2.colors = [UIColor(red: 0, green: 1, blue: 173/2, alpha: 0.2).cgColor, UIColor(red: 1, green: 0, blue: 157/255, alpha: 0.2).cgColor]
@@ -387,10 +316,7 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         layer2.shadowOpacity = 1
         layer2.shadowColor = UIColor.white.cgColor
         layer2.shadowRadius = 20
-        
         scrollView.layer.addSublayer(layer2)
-        
-        
     }
     
     
@@ -411,14 +337,9 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         let annotation = MKPointAnnotation()
         annotation.coordinate = touchedCoordinate
         self.mapView.addAnnotation(annotation)
-        
-        
-        
-        
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            
             if annotation is MKUserLocation{
                 return nil
             }
@@ -431,15 +352,9 @@ class UploadViewController: UIViewController, MKMapViewDelegate, CLLocationManag
                 pinView?.canShowCallout = true
                 let button = UIButton(type: UIButton.ButtonType.detailDisclosure)
                 pinView?.rightCalloutAccessoryView = button
-                
             } else {
                 pinView?.annotation = annotation
-                
             }
             return pinView
         }
-   
-    
-
-
 }
